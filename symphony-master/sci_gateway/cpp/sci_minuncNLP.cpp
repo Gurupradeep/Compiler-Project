@@ -23,13 +23,18 @@ using namespace Ipopt;
 minNLP::~minNLP()
 {
 	free(finalX_);
-	free(finalZl_);
-	free(finalZu_);
+	free(finalGradient_);
+	free(finalHessian_);
+	//free(finalZl_);
+	//free(finalZu_);
+
 }
 
 //get NLP info such as number of variables,constraints,no.of elements in jacobian and hessian to allocate memory
 bool minNLP::get_nlp_info(Index& n, Index& m, Index& nnz_jac_g, Index& nnz_h_lag, IndexStyleEnum& index_style)
 {
+finalGradient_ = (double*)malloc(sizeof(double) * numVars_ * 1);
+finalHessian_ = (double*)malloc(sizeof(double) * numVars_ * numVars_);
 sciprint("\nrec1");
 	n=numVars_; // Number of variables
 
@@ -134,10 +139,11 @@ bool minNLP::eval_grad_f(Index n, const Number* x, bool new_x, Number* grad_f)
   	int numberOfLhsOnScilabFunction = 1;
   	int pointerOnScilabFunction     = *gradhesptr;
 	char name[20]="gradhess_";
-  
+ 
   	C2F(scistring)(&positionFirstElementOnStackForScilabFunction,name,
                                                                &numberOfLhsOnScilabFunction,
                                                                &numberOfRhsOnScilabFunction,(unsigned long)strlen(name));
+ 
                                
   	double* resg;  
   	int x0_rows,x0_cols;                           
@@ -148,6 +154,7 @@ bool minNLP::eval_grad_f(Index n, const Number* x, bool new_x, Number* grad_f)
 		
   	}
   	Index i;
+cout<<"\ncreated mat";
   	for(i=0;i<numVars_;i++)
   	{
 		grad_f[i]=resg[i];
@@ -207,29 +214,7 @@ sciprint("\nrec8");
         //sciprint("Recieved");
 cout<<"Hello";
        
-  	double *xNew=x;
-  	double t=2;
-	
-  	createMatrixOfDouble(pvApiCtx, 3, 1, numVars_, xNew);
-  	createScalarDouble(pvApiCtx, 4,t);
-  	int positionFirstElementOnStackForScilabFunction = 3;
-  	int numberOfRhsOnScilabFunction = 2;
-  	int numberOfLhsOnScilabFunction = 1;
-  	int pointerOnScilabFunction     = *gradhesptr;
-	char name[20]="gradhess_";
-  
-  	C2F(scistring)(&positionFirstElementOnStackForScilabFunction,name,
-                                                               &numberOfLhsOnScilabFunction,
-                                                               &numberOfRhsOnScilabFunction,(unsigned long)strlen(name));
-                               
-  	double* resh;  
-  	int x0_rows,x0_cols;                           
-  	if(getDoubleMatrixFromScilab(3, &x0_rows, &x0_cols, &resh))
-	{
-		sciprint("No results");
-		return 1;
-	}
-
+  	
 	if (values==NULL)
 	{
 		Index idx=0;
@@ -245,6 +230,30 @@ cout<<"Hello";
 	}
 	else 
 	{
+
+		double *xNew=x;
+  		double t=2;
+	
+  		createMatrixOfDouble(pvApiCtx, 3, 1, numVars_, xNew);
+  		createScalarDouble(pvApiCtx, 4,t);
+  		int positionFirstElementOnStackForScilabFunction = 3;
+  		int numberOfRhsOnScilabFunction = 2;
+  		int numberOfLhsOnScilabFunction = 1;
+  		int pointerOnScilabFunction     = *gradhesptr;
+		char name[20]="gradhess_";
+  
+  		C2F(scistring)(&positionFirstElementOnStackForScilabFunction,name,
+                                                               &numberOfLhsOnScilabFunction,
+                                                               &numberOfRhsOnScilabFunction,(unsigned long)strlen(name));
+                               
+  		double* resh;  
+  		int x0_rows,x0_cols;                           
+  		if(getDoubleMatrixFromScilab(3, &x0_rows, &x0_cols, &resh))
+		{
+			sciprint("No results");
+			return 1;
+		}
+
 		Index index=0;
 		for (Index row=0;row < numVars_ ;++row)
 		{
@@ -253,13 +262,15 @@ cout<<"Hello";
 				values[index++]=obj_factor*(resh[numVars_*row+col]);
 			}
 		}
+
+		Index i;
+  		for(i=0;i<numVars_*numVars_;i++)
+  		{
+        		finalHessian_[i]=resh[i];
+ 		}
 	}
 	
-	Index i;
-  	for(i=0;i<numVars_*numVars_;i++)
-  	{
-        	finalHessian_[i]=resh[i];
- 	}
+	
 
        	return true;
 }

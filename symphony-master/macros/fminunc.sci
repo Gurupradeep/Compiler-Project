@@ -11,7 +11,7 @@
 
 
 //function [xopt,fopt,exitflag,output,lambda] = qpipopt (varargin)
-  function [xopt,fopt,exitflag,output,grad,hessian] = fminunc (varargin)
+  function [xopt,fopt,exitflag,output,gradient,hessian] = fminunc (varargin)
   // Solves a linear quadratic problem.
   //
   //   Calling Sequence
@@ -318,8 +318,9 @@
 		//end	
 	//end
 	function y=gradhess_(x,t)
+		disp("\nNumderivative")
 		if t==1 then
-			[y,hess]=numderivative(fun_,x)
+			y=numderivative(fun_,x)
 		else
 			[grad,y]=numderivative(fun_,x)
 		end
@@ -329,6 +330,7 @@
    //[xopt,fopt,status,iter,Zl,Zu,lmbda] = solveqp(nbVar,nbCon,Q,p,conMatrix,conLB,conUB,LB,UB,x0,options);
    [xopt,fopt,status,iter,gradient, hessian1] = solveminuncp(fun_,gradhess_,x0,options);
    xopt = xopt';
+   //gradient=grad';
    exitflag = status;
    output = struct("Iterations"      , []);
    output.Iterations = iter;

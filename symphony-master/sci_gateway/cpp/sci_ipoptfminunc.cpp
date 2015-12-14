@@ -18,7 +18,9 @@ extern "C"
 #include <BOOL.h>
 #include <localization.h>
 #include <sciprint.h>
+#include <iostream>
 
+using namespace std;
 //Global variables
 
 
@@ -120,6 +122,7 @@ int sci_solveminuncp(char *fname)
 	 status = app->OptimizeTNLP(Prob);
 
 	 rstatus = Prob->returnStatus();
+         
 
 	////////// Manage the output argument //////////
 
@@ -159,6 +162,7 @@ int sci_solveminuncp(char *fname)
 		{
 			return 1;
 		}
+cout<<"\nIpopt has done its part";
 	}
 
 	else
