@@ -144,7 +144,7 @@ Files = [
 		"sci_QuadNLP.cpp",
 		"QuadNLP.hpp",
 		"sci_ipopt.cpp"
-		"minNLP.hpp"
+		"minuncNLP.hpp"
 		"sci_minuncNLP.cpp"
 		"sci_ipoptfminunc.cpp"
 		

@@ -9,7 +9,7 @@
 
 #include "sci_iofunc.hpp"
 #include "IpIpoptApplication.hpp"
-#include "minNLP.hpp"
+#include "minuncNLP.hpp"
 
 extern "C"
 {
@@ -40,14 +40,13 @@ int sci_solveminuncp(char *fname)
 	double* x0ptr=NULL;
 
         // Input arguments
-	//double *QItems=NULL,*PItems=NULL,*ConItems=NULL,*conUB=NULL,*conLB=NULL;
-	double *cpu_time=NULL,*max_iter=NULL;//*varUB=NULL,*varLB=NULL,*init_guess=NULL;
+	double *cpu_time=NULL,*max_iter=NULL;
 	static unsigned int nVars = 0,nCons = 0;
 	unsigned int temp1 = 0,temp2 = 0, iret = 0;
 	int x0_rows, x0_cols;
 	
 	// Output arguments
-	double *fX = NULL, ObjVal=0,iteration=0; //*Zl=NULL, *Zu=NULL, *Lambda=NULL;
+	double *fX = NULL, ObjVal=0,iteration=0;
 	double *fGrad=  NULL;
 	double *fHess=  NULL;
 	int rstatus = 0;
@@ -91,9 +90,7 @@ int sci_solveminuncp(char *fname)
         
         // Starting Ipopt
 
-	SmartPtr<minNLP> Prob = new minNLP(nVars, nCons,x0ptr);
-	//new QuadNLP(nVars,nCons,QItems,PItems,ConItems,conUB,conLB,varUB,varLB,init_guess);
-	
+	SmartPtr<minuncNLP> Prob = new minuncNLP(nVars, nCons,x0ptr);
 	SmartPtr<IpoptApplication> app = IpoptApplicationFactory();
 	app->RethrowNonIpoptException(true);
 
@@ -162,7 +159,6 @@ int sci_solveminuncp(char *fname)
 		{
 			return 1;
 		}
-cout<<"\nIpopt has done its part";
 	}
 
 	else
@@ -196,44 +192,6 @@ cout<<"\nIpopt has done its part";
 		}
 	}
 
-
-	/*if(rstatus == 0){
-	
-		Zl = Prob->getZl();
-		Zu = Prob->getZu();
-		Lambda = Prob->getLambda();
-		if (returnDoubleMatrixToScilab(5, 1, nVars, Zl))
-		{
-			return 1;
-		}
-
-		if (returnDoubleMatrixToScilab(6, 1, nVars, Zu))
-		{
-			return 1;
-		}
-
-		if (returnDoubleMatrixToScilab(7, 1, 1, Lambda))
-		{
-			return 1;
-		}
-	}
-
-	else{
-		if (returnDoubleMatrixToScilab(5, 0, 0, Zl))
-		{
-			return 1;
-		}
-
-		if (returnDoubleMatrixToScilab(6, 0, 0, Zu))
-		{
-			return 1;
-		}
-
-		if (returnDoubleMatrixToScilab(7, 0, 0, Lambda))
-		{
-			return 1;
-		}
-	}
 	// As the SmartPtrs go out of scope, the reference count
 	// will be decremented and the objects will automatically
 	// be deleted.*/

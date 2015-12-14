@@ -1,4 +1,4 @@
-#include "minNLP.hpp"
+#include "minuncNLP.hpp"
 #include "IpIpoptData.hpp"
 #include "sci_iofunc.hpp"
 
@@ -20,26 +20,20 @@ using namespace std;
 
 using namespace Ipopt;
 
-minNLP::~minNLP()
+minuncNLP::~minuncNLP()
 {
 	free(finalX_);
 	free(finalGradient_);
 	free(finalHessian_);
-	//free(finalZl_);
-	//free(finalZu_);
-
 }
 
 //get NLP info such as number of variables,constraints,no.of elements in jacobian and hessian to allocate memory
-bool minNLP::get_nlp_info(Index& n, Index& m, Index& nnz_jac_g, Index& nnz_h_lag, IndexStyleEnum& index_style)
+bool minuncNLP::get_nlp_info(Index& n, Index& m, Index& nnz_jac_g, Index& nnz_h_lag, IndexStyleEnum& index_style)
 {
-finalGradient_ = (double*)malloc(sizeof(double) * numVars_ * 1);
-finalHessian_ = (double*)malloc(sizeof(double) * numVars_ * numVars_);
-sciprint("\nrec1");
+	finalGradient_ = (double*)malloc(sizeof(double) * numVars_ * 1);
+	finalHessian_ = (double*)malloc(sizeof(double) * numVars_ * numVars_);
 	n=numVars_; // Number of variables
-
 	m=numConstr_; // Number of constraints
-cout<<" "<<n<<" "<<m;
 	nnz_jac_g = 0; // No. of elements in Jacobian of constraints 
 	nnz_h_lag = n*(n+1)/2; // No. of elements in lower traingle of Hessian of the Lagrangian.
 	index_style=C_STYLE; // Index style of matrices
@@ -47,9 +41,8 @@ cout<<" "<<n<<" "<<m;
 }
 
 //get variable and constraint bound info
-bool minNLP::get_bounds_info(Index n, Number* x_l, Number* x_u, Index m, Number* g_l, Number* g_u)
+bool minuncNLP::get_bounds_info(Index n, Number* x_l, Number* x_u, Index m, Number* g_l, Number* g_u)
 {
-sciprint("\nrec2");
 	unsigned int i;
 	for(i=0;i<n;i++)
 	{
@@ -63,18 +56,16 @@ sciprint("\nrec2");
 }
 
 // return the value of the constraints: g(x)
-bool minNLP::eval_g(Index n, const Number* x, bool new_x, Index m, Number* g)
+bool minuncNLP::eval_g(Index n, const Number* x, bool new_x, Index m, Number* g)
 {
-sciprint("\nrec3");
   // return the value of the constraints: g(x)
   g=NULL;
   return true;
 }
 
 // return the structure or values of the jacobian
-bool minNLP::eval_jac_g(Index n, const Number* x, bool new_x,Index m, Index nele_jac, Index* iRow, Index *jCol,Number* values)
+bool minuncNLP::eval_jac_g(Index n, const Number* x, bool new_x,Index m, Index nele_jac, Index* iRow, Index *jCol,Number* values)
 {
-sciprint("\nrec4");
  	if (values == NULL) 
  	{
     		// return the structure of the jacobian of the constraints
@@ -90,9 +81,8 @@ sciprint("\nrec4");
 }
 
 //get value of objective function at vector x
-bool minNLP::eval_f(Index n, const Number* x, bool new_x, Number& obj_value)
+bool minuncNLP::eval_f(Index n, const Number* x, bool new_x, Number& obj_value)
 {
-sciprint("\nrec5");
   	int* funptr=NULL;  
   	if(getFunctionFromScilab(1,&funptr))
   	{
@@ -122,9 +112,8 @@ sciprint("\nrec5");
 }
 
 //get value of gradient of objective function at vector x.
-bool minNLP::eval_grad_f(Index n, const Number* x, bool new_x, Number* grad_f)
+bool minuncNLP::eval_grad_f(Index n, const Number* x, bool new_x, Number* grad_f)
 {
- sciprint("\nrec6");
   	int* gradhesptr=NULL;
   	if(getFunctionFromScilab(2,&gradhesptr))
   	{
@@ -153,8 +142,8 @@ bool minNLP::eval_grad_f(Index n, const Number* x, bool new_x, Number* grad_f)
 		return 1;
 		
   	}
+
   	Index i;
-cout<<"\ncreated mat";
   	for(i=0;i<numVars_;i++)
   	{
 		grad_f[i]=resg[i];
@@ -165,11 +154,9 @@ cout<<"\ncreated mat";
 }
 
 // This method sets initial values for required vectors . For now we are assuming 0 to all values. 
-bool minNLP::get_starting_point(Index n, bool init_x, Number* x,bool init_z, Number* z_L, Number* z_U,Index m, bool init_lambda,Number* lambda)
+bool minuncNLP::get_starting_point(Index n, bool init_x, Number* x,bool init_z, Number* z_L, Number* z_U,Index m, bool init_lambda,Number* lambda)
 {
-sciprint("\nrec7");
-
-  	assert(init_x == true);
+ 	assert(init_x == true);
   	assert(init_z == false);
   	assert(init_lambda == false);
 	if (init_x == true)
@@ -177,19 +164,6 @@ sciprint("\nrec7");
 		for (Index var=0;var<n;var++)
 			x[var]=varGuess_[var];//initialize with 0 or we can change.
 	}
-
-	/*if (init_z == true){ //we need to provide initial values for vector bound multipliers
-		for (Index var=0;var<n;++var){
-			z_L[var]=0.0; //initialize with 0 or we can change.
-			z_U[var]=0.0;//initialize with 0 or we can change.
-			}
-		}
-	
-	if (init_lambda == true){ //we need to provide initial values for lambda values.
-		for (Index var=0;var<m;++var){
-			lambda[var]=0.0; //initialize with 0 or we can change.
-			}
-		}*/
 
 	return true;
 }
@@ -199,22 +173,14 @@ sciprint("\nrec7");
  * or the values of the Hessian of the Lagrangian  for the given values for
  * x,lambda,obj_factor.
 */
-bool minNLP::eval_h(Index n, const Number* x, bool new_x,Number obj_factor, Index m, const Number* lambda,bool new_lambda, Index nele_hess, Index* iRow,Index* jCol, Number* values)
+bool minuncNLP::eval_h(Index n, const Number* x, bool new_x,Number obj_factor, Index m, const Number* lambda,bool new_lambda, Index nele_hess, Index* iRow,Index* jCol, Number* values)
 {
-int j;
-//cout<<x[0]<<" "<<x[1];
-for(j=0;j<n;j++)
-	sciprint("\nval:%f",varGuess_[j]);
-sciprint("\nrec8");
 	int* gradhesptr=NULL;
 	if(getFunctionFromScilab(2,&gradhesptr))
 	{
 		return 1;
 	}   
-        //sciprint("Recieved");
-cout<<"Hello";
-       
-  	
+
 	if (values==NULL)
 	{
 		Index idx=0;
@@ -270,38 +236,17 @@ cout<<"Hello";
  		}
 	}
 	
-	
-
        	return true;
 }
 
 
-void minNLP::finalize_solution(SolverReturn status,Index n, const Number* x, const Number* z_L, const Number* z_U,Index m, const Number* g, const Number* lambda, Number obj_value,const IpoptData* ip_data,IpoptCalculatedQuantities* ip_cq)
+void minuncNLP::finalize_solution(SolverReturn status,Index n, const Number* x, const Number* z_L, const Number* z_U,Index m, const Number* g, const Number* lambda, Number obj_value,const IpoptData* ip_data,IpoptCalculatedQuantities* ip_cq)
 {
-	sciprint("\nrec9");
 	finalX_ = (double*)malloc(sizeof(double) * numVars_ * 1);
 	for (Index i=0; i<numVars_; i++) 
 	{
     		 finalX_[i] = x[i];
 	}
-	
-	/*finalZl_ = (double*)malloc(sizeof(double) * numVars_ * 1);
-	for (Index i=0; i<n; i++) 
-	{
-    		 finalZl_[i] = z_L[i];
-	}
-
-	finalZu_ = (double*)malloc(sizeof(double) * numVars_ * 1);
-	for (Index i=0; i<n; i++) 
-	{
-    		 finalZu_[i] = z_U[i];
-	}
-
-	finalLambda_ = (double*)malloc(sizeof(double) * numConstr_ * 1);
-	for (Index i=0; i<m; i++) 
-	{
-    		 finalLambda_[i] = lambda[i];
-	}*/
 
 	finalObjVal_ = obj_value;
 	status_ = status;
@@ -312,37 +257,32 @@ void minNLP::finalize_solution(SolverReturn status,Index n, const Number* x, con
 }
 
 
-const double * minNLP::getX()
+const double * minuncNLP::getX()
 {	
 	return finalX_;
 }
 
-const double * minNLP::getGrad()
+const double * minuncNLP::getGrad()
 {	
 	return finalGradient_;
 }
 
-const double * minNLP::getHess()
+const double * minuncNLP::getHess()
 {	
 	return finalHessian_;
 }
 
-/*const double * QuadNLP::getLambda()
-{	
-	return finalLambda_;
-}*/
-
-double minNLP::getObjVal()
+double minuncNLP::getObjVal()
 {	
 	return finalObjVal_;
 }
 
-double minNLP::iterCount()
+double minuncNLP::iterCount()
 {	
 	return (double)iter_;
 }
 
-int minNLP::returnStatus()
+int minuncNLP::returnStatus()
 {	
 	return status_;
 }

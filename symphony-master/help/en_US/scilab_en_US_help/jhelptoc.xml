@@ -2,7 +2,7 @@
 <!DOCTYPE toc PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 1.0//EN" "http://java.sun.com/products/javahelp/toc_1_0.dtd">
 <toc version="1.0">
 <tocitem target="index" text="Symphony Toolbox">
-<tocitem target="section_737f7ad69d82a5e7cbf20bdaad07b181" text="Symphony Toolbox">
+<tocitem target="section_f65715a38be1ad09e922ff36ab07d78c" text="Symphony Toolbox">
 <tocitem target="lsqlin" text="lsqlin"/>
 <tocitem target="qpipopt" text="qpipopt"/>
 <tocitem target="qpipopt_mat" text="qpipopt_mat"/>
@@ -10,7 +10,7 @@
 <tocitem target="symphony" text="symphony"/>
 <tocitem target="symphony_mat" text="symphony_mat"/>
 <tocitem target="symphonymat" text="symphonymat"/>
-<tocitem target="section_406204cc51ccbf7e16e04140d2a039fa" text="Symphony Native Functions">
+<tocitem target="section_0b13a02bf52d2a5df5c960bf579fb538" text="Symphony Native Functions">
 <tocitem target="sym_addConstr" text="sym_addConstr"/>
 <tocitem target="sym_addVar" text="sym_addVar"/>
 <tocitem target="sym_close" text="sym_close"/>
