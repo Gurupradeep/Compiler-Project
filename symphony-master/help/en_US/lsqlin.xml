@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+ *
+ * This help file was generated from lsqlin.sci using help_from_sci().
+ *
+ -->
+
+<refentry version="5.0-subset Scilab" xml:id="lsqlin" xml:lang="en"
+          xmlns="http://docbook.org/ns/docbook"
+          xmlns:xlink="http://www.w3.org/1999/xlink"
+          xmlns:svg="http://www.w3.org/2000/svg"
+          xmlns:ns3="http://www.w3.org/1999/xhtml"
+          xmlns:mml="http://www.w3.org/1998/Math/MathML"
+          xmlns:scilab="http://www.scilab.org"
+          xmlns:db="http://docbook.org/ns/docbook">
+
+  <refnamediv>
+    <refname>lsqlin</refname>
+    <refpurpose>Solves a linear quadratic problem.</refpurpose>
+  </refnamediv>
+
+
+<refsynopsisdiv>
+   <title>Calling Sequence</title>
+   <synopsis>
+   x = lsqlin(C,d,A,b)
+   x = lsqlin(C,d,A,b,Aeq,beq)
+   x = lsqlin(C,d,A,b,Aeq,beq,lb,ub)
+   x = lsqlin(C,d,A,b,Aeq,beq,lb,ub,x0)
+   x = lsqlin(C,d,A,b,Aeq,beq,lb,ub,x0,param)
+   [xopt,resnorm,residual,exitflag,output,lambda] = lsqlin( ... )
+   
+   </synopsis>
+</refsynopsisdiv>
+
+<refsection>
+   <title>Parameters</title>
+   <variablelist>
+   <varlistentry><term>C :</term>
+      <listitem><para> a matrix of doubles, represents the multiplier of the solution x in the expression C*x - d. C is M-by-N, where M is the number of equations, and N is the number of elements of x.</para></listitem></varlistentry>
+   <varlistentry><term>d :</term>
+      <listitem><para> a vector of doubles, represents the additive constant term in the expression C*x - d. d is M-by-1, where M is the number of equations.</para></listitem></varlistentry>
+   <varlistentry><term>A :</term>
+      <listitem><para> a vector of doubles, represents the linear coefficients in the inequality constraints</para></listitem></varlistentry>
+   <varlistentry><term>b :</term>
+      <listitem><para> a vector of doubles, represents the linear coefficients in the inequality constraints</para></listitem></varlistentry>
+   <varlistentry><term>Aeq :</term>
+      <listitem><para> a matrix of doubles, represents the linear coefficients in the equality constraints</para></listitem></varlistentry>
+   <varlistentry><term>beq :</term>
+      <listitem><para> a vector of doubles, represents the linear coefficients in the equality constraints</para></listitem></varlistentry>
+   <varlistentry><term>LB :</term>
+      <listitem><para> a vector of doubles, where n is number of variables, contains lower bounds of the variables.</para></listitem></varlistentry>
+   <varlistentry><term>UB :</term>
+      <listitem><para> a vector of doubles, where n is number of variables, contains upper bounds of the variables.</para></listitem></varlistentry>
+   <varlistentry><term>x0 :</term>
+      <listitem><para> a vector of doubles, contains initial guess of variables.</para></listitem></varlistentry>
+   <varlistentry><term>param :</term>
+      <listitem><para> a list containing the the parameters to be set.</para></listitem></varlistentry>
+   <varlistentry><term>xopt :</term>
+      <listitem><para> a vector of doubles, the computed solution of the optimization problem.</para></listitem></varlistentry>
+   <varlistentry><term>fopt :</term>
+      <listitem><para> a double, the function value at x.</para></listitem></varlistentry>
+   <varlistentry><term>exitflag :</term>
+      <listitem><para> Integer identifying the reason the algorithm terminated.</para></listitem></varlistentry>
+   <varlistentry><term>output :</term>
+      <listitem><para> Structure containing information about the optimization.</para></listitem></varlistentry>
+   <varlistentry><term>lambda :</term>
+      <listitem><para> Structure containing the Lagrange multipliers at the solution x (separated by constraint type).</para></listitem></varlistentry>
+   </variablelist>
+</refsection>
+
+<refsection>
+   <title>Description</title>
+   <para>
+Search the minimum of a constrained linear least square problem specified by :
+find the minimum of f(x) such that
+   </para>
+   <para>
+<latex>
+\begin{eqnarray}
+&amp;\mbox{min}_{x}
+&amp; 1/2||C*x - d||_2^2  \\
+&amp; \text{subject to} &amp; A.x \leq b \\
+&amp; &amp; Aeq.x \leq beq \\
+&amp; &amp; lb \leq x \leq ub \\
+\end{eqnarray}
+</latex>
+   </para>
+   <para>
+We are calling IPOpt for solving the linear least square problem, IPOpt is a library written in C++. The code has been written by ​Andreas Wächter and ​Carl Laird.
+   </para>
+   <para>
+</para>
+</refsection>
+
+<refsection>
+   <title>Examples</title>
+   <programlisting role="example"><![CDATA[
+//A simple linear least square example
+C = [0.9501    0.7620    0.6153    0.4057
+0.2311    0.4564    0.7919    0.9354
+0.6068    0.0185    0.9218    0.9169
+0.4859    0.8214    0.7382    0.4102
+0.8912    0.4447    0.1762    0.8936];
+d = [0.0578
+0.3528
+0.8131
+0.0098
+0.1388];
+A = [0.2027    0.2721    0.7467    0.4659
+0.1987    0.1988    0.4450    0.4186
+0.6037    0.0152    0.9318    0.8462];
+b = [0.5251
+0.2026
+0.6721];
+[xopt,resnorm,residual,exitflag,output,lambda] = lsqlin(C,d,A,b)
+
+   ]]></programlisting>
+</refsection>
+
+<refsection>
+   <title>Examples</title>
+   <programlisting role="example"><![CDATA[
+C = [0.9501    0.7620    0.6153    0.4057
+0.2311    0.4564    0.7919    0.9354
+0.6068    0.0185    0.9218    0.9169
+0.4859    0.8214    0.7382    0.4102
+0.8912    0.4447    0.1762    0.8936];
+d = [0.0578
+0.3528
+0.8131
+0.0098
+0.1388];
+A =[0.2027    0.2721    0.7467    0.4659
+0.1987    0.1988    0.4450    0.4186
+0.6037    0.0152    0.9318    0.8462];
+b =[0.5251
+0.2026
+0.6721];
+Aeq = [3 5 7 9];
+beq = 4;
+lb = -0.1*ones(4,1);
+ub = 2*ones(4,1);
+[xopt,resnorm,residual,exitflag,output,lambda] = lsqlin(C,d,A,b,Aeq,beq,lb,ub)
+
+   ]]></programlisting>
+</refsection>
+
+<refsection>
+   <title>Authors</title>
+   <simplelist type="vert">
+   <member>Harpreet Singh</member>
+   </simplelist>
+</refsection>
+</refentry>

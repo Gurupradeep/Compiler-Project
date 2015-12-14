@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+ *
+ * This help file was generated from qpipopt.sci using help_from_sci().
+ *
+ -->
+
+<refentry version="5.0-subset Scilab" xml:id="qpipopt" xml:lang="en"
+          xmlns="http://docbook.org/ns/docbook"
+          xmlns:xlink="http://www.w3.org/1999/xlink"
+          xmlns:svg="http://www.w3.org/2000/svg"
+          xmlns:ns3="http://www.w3.org/1999/xhtml"
+          xmlns:mml="http://www.w3.org/1998/Math/MathML"
+          xmlns:scilab="http://www.scilab.org"
+          xmlns:db="http://docbook.org/ns/docbook">
+
+  <refnamediv>
+    <refname>qpipopt</refname>
+    <refpurpose>Solves a linear quadratic problem.</refpurpose>
+  </refnamediv>
+
+
+<refsynopsisdiv>
+   <title>Calling Sequence</title>
+   <synopsis>
+   xopt = qpipopt(nbVar,nbCon,Q,p,LB,UB,conMatrix,conLB,conUB)
+   xopt = qpipopt(nbVar,nbCon,Q,p,LB,UB,conMatrix,conLB,conUB,x0)
+   xopt = qpipopt(nbVar,nbCon,Q,p,LB,UB,conMatrix,conLB,conUB,x0,param)
+   [xopt,fopt,exitflag,output,lamda] = qpipopt( ... )
+   
+   </synopsis>
+</refsynopsisdiv>
+
+<refsection>
+   <title>Parameters</title>
+   <variablelist>
+   <varlistentry><term>nbVar :</term>
+      <listitem><para> a double, number of variables</para></listitem></varlistentry>
+   <varlistentry><term>nbCon :</term>
+      <listitem><para> a double, number of constraints</para></listitem></varlistentry>
+   <varlistentry><term>Q :</term>
+      <listitem><para> a symmetric matrix of doubles, represents coefficients of quadratic in the quadratic problem.</para></listitem></varlistentry>
+   <varlistentry><term>p :</term>
+      <listitem><para> a vector of doubles, represents coefficients of linear in the quadratic problem</para></listitem></varlistentry>
+   <varlistentry><term>LB :</term>
+      <listitem><para> a vector of doubles, contains lower bounds of the variables.</para></listitem></varlistentry>
+   <varlistentry><term>UB :</term>
+      <listitem><para> a vector of doubles, where n is number of variables, contains upper bounds of the variables.</para></listitem></varlistentry>
+   <varlistentry><term>conMatrix :</term>
+      <listitem><para> a matrix of doubles, contains  matrix representing the constraint matrix</para></listitem></varlistentry>
+   <varlistentry><term>conLB :</term>
+      <listitem><para> a vector of doubles, contains lower bounds of the constraints.</para></listitem></varlistentry>
+   <varlistentry><term>conUB :</term>
+      <listitem><para> a vector of doubles, contains upper bounds of the constraints.</para></listitem></varlistentry>
+   <varlistentry><term>x0 :</term>
+      <listitem><para> a vector of doubles, contains initial guess of variables.</para></listitem></varlistentry>
+   <varlistentry><term>param :</term>
+      <listitem><para> a list containing the the parameters to be set.</para></listitem></varlistentry>
+   <varlistentry><term>xopt :</term>
+      <listitem><para> a vector of doubles, the computed solution of the optimization problem.</para></listitem></varlistentry>
+   <varlistentry><term>fopt :</term>
+      <listitem><para> a double, the function value at x.</para></listitem></varlistentry>
+   <varlistentry><term>exitflag :</term>
+      <listitem><para> Integer identifying the reason the algorithm terminated.</para></listitem></varlistentry>
+   <varlistentry><term>output :</term>
+      <listitem><para> Structure containing information about the optimization.</para></listitem></varlistentry>
+   <varlistentry><term>lambda :</term>
+      <listitem><para> Structure containing the Lagrange multipliers at the solution x (separated by constraint type).</para></listitem></varlistentry>
+   </variablelist>
+</refsection>
+
+<refsection>
+   <title>Description</title>
+   <para>
+Search the minimum of a constrained linear quadratic optimization problem specified by :
+find the minimum of f(x) such that
+   </para>
+   <para>
+<latex>
+\begin{eqnarray}
+&amp;\mbox{min}_{x}
+&amp; 1/2*x'*Q*x + p'*x  \\
+&amp; \text{subject to} &amp; conLB \leq C(x) \leq conUB \\
+&amp; &amp; lb \leq x \leq ub \\
+\end{eqnarray}
+</latex>
+   </para>
+   <para>
+We are calling IPOpt for solving the quadratic problem, IPOpt is a library written in C++. The code has been written by ​Andreas Wächter and ​Carl Laird.
+   </para>
+   <para>
+</para>
+</refsection>
+
+<refsection>
+   <title>Examples</title>
+   <programlisting role="example"><![CDATA[
+//Find x in R^6 such that:
+conMatrix= [1,-1,1,0,3,1;
+-1,0,-3,-4,5,6;
+2,5,3,0,1,0
+0,1,0,1,2,-1;
+-1,0,2,1,1,0];
+conLB=[1;2;3;-%inf;-%inf];
+conUB = [1;2;3;-1;2.5];
+lb=[-1000;-10000; 0; -1000; -1000; -1000];
+ub=[10000; 100; 1.5; 100; 100; 1000];
+//and minimize 0.5*x'*Q*x + p'*x with
+p=[1; 2; 3; 4; 5; 6]; Q=eye(6,6);
+nbVar = 6;
+nbCon = 5;
+x0 = repmat(0,nbVar,1);
+param = list("MaxIter", 300, "CpuTime", 100);
+[xopt,fopt,exitflag,output,lambda]=qpipopt(nbVar,nbCon,Q,p,lb,ub,conMatrix,conLB,conUB,x0,param)
+
+   ]]></programlisting>
+</refsection>
+
+<refsection>
+   <title>Examples</title>
+   <programlisting role="example"><![CDATA[
+//Find the value of x that minimize following function
+// f(x) = 0.5*x1^2 + x2^2 - x1*x2 - 2*x1 - 6*x2
+// Subject to:
+// x1 + x2 ≤ 2
+// –x1 + 2x2 ≤ 2
+// 2x1 + x2 ≤ 3
+// 0 ≤ x1, 0 ≤ x2.
+Q = [1 -1; -1 2];
+p = [-2; -6];
+conMatrix = [1 1; -1 2; 2 1];
+conUB = [2; 2; 3];
+conLB = [-%inf; -%inf; -%inf];
+lb = [0; 0];
+ub = [%inf; %inf];
+nbVar = 2;
+nbCon = 3;
+[xopt,fopt,exitflag,output,lambda] = qpipopt(nbVar,nbCon,Q,p,lb,ub,conMatrix,conLB,conUB)
+
+   ]]></programlisting>
+</refsection>
+
+<refsection>
+   <title>Authors</title>
+   <simplelist type="vert">
+   <member>Keyur Joshi, Saikiran, Iswarya, Harpreet Singh</member>
+   </simplelist>
+</refsection>
+</refentry>
