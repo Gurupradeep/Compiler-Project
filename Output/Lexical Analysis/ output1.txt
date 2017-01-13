@@ -21,10 +21,10 @@ fact : VARIABLE NAME at line 6
   : WHITESPACE at line 6
 = : ASSIGNMENT at line 6
    : WHITESPACE at line 6
-1 : DIGIT at line 6
+1 : NUMBER at line 6
 ; : SEMICOLON at line 6
 	 : WHITESPACE at line 7
-scanf : VARIABLE NAME at line 7
+scanf : SCAN at line 7
 ( : OPEN_PAREN at line 7
 "%d" : STRING
 , : COMMA at line 7
@@ -43,7 +43,7 @@ i : VARIABLE NAME at line 9
   : WHITESPACE at line 9
 = : ASSIGNMENT at line 9
    : WHITESPACE at line 9
-1 : DIGIT at line 9
+1 : NUMBER at line 9
 ; : SEMICOLON at line 9
   : WHITESPACE at line 9
 i : VARIABLE NAME at line 9
@@ -54,7 +54,7 @@ n : VARIABLE NAME at line 9
   : WHITESPACE at line 9
 + : ADD at line 9
   : WHITESPACE at line 9
-1 : DIGIT at line 9
+1 : NUMBER at line 9
 ; : SEMICOLON at line 9
   : WHITESPACE at line 9
 i : VARIABLE NAME at line 9
@@ -77,7 +77,7 @@ M
 	comment
 END COMMENT at line 15
 	 : WHITESPACE at line 16
-printf : VARIABLE NAME at line 16
+printf : print at line 16
 ( : OPEN_PAREN at line 16
 "Factorial : %lld" : STRING
 , : COMMA at line 16
@@ -87,7 +87,7 @@ fact : VARIABLE NAME at line 16
 	 : WHITESPACE at line 17
 return : RETURN at line 17
   : WHITESPACE at line 17
-0 : DIGIT at line 17
+0 : NUMBER at line 17
 ; : SEMICOLON at line 17
 } : CLOSE_BRACE at line 18
 Unexpected character at line 19
