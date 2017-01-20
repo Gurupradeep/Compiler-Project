@@ -4,6 +4,7 @@
 %}
 
 VARNAME [_a-zA-Z][a-zA-Z0-9]* 
+FUNCTION [_a-zA-Z][a-zA-Z0-9]*\([ ]*int[ ]+{VARNAME}[ ]*,[ ]*int[ ]+{VARNAME}[ ]*\) 
 DIGIT [0-9]
 KEYWORD int|main|return|for|do" "while|while|if|else
 PREPROCESSOR #[a-zA-Z]+
@@ -18,7 +19,8 @@ START_MULTI_LINE \/\*
 {START_MULTI_LINE} 	{BEGIN startComment; printf("START COMMENT at line %d\n",linecount);}
 <startComment>\n 	{linecount++;}
 <startComment>\*\/	{BEGIN 0; printf("END COMMENT at line %d\n",linecount);}
-<startComment>[^(\*\/|\n)]*	{printf("%s\n",yytext);}
+<startComment>[^(\*\/|\n)]*	{;}
+{FUNCTION} printf("%s FUNCTION\n",yytext);
 {STRING} printf("%s : STRING\n",yytext);
 {PREPROCESSOR} printf("%s : PREPROCESSOR DIRECTIVE at line %d\n",yytext,linecount);
 {SINGLE_LINE_COMMENT} printf("%s : COMMENTS at line %d\n",yytext,linecount);
@@ -67,7 +69,7 @@ START_MULTI_LINE \/\*
 {VARNAME} printf("%s : VARIABLE NAME at line %d\n",yytext,linecount);
 {DIGIT}+ printf("%s : NUMBER at line %d\n",yytext,linecount);
 \n linecount++;
-[ \t]+ printf("%s : WHITESPACE at line %d\n",yytext,linecount);
+[ \t]+ ;
 . printf("Unexpected character at line %d\n",linecount);
 
 %%
