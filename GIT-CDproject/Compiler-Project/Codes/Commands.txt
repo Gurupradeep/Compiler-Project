@@ -1,0 +1,5 @@
+lex scanner.l
+gcc lex.yy.c -o scanner -lfl
+./scanner sampleC.c 
+g++ symbol_table.cpp -o symbol_table
+./symbol_table 
